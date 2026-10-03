@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>鳴子温泉クイズ｜あなたは何級？</title>
+<meta property="og:title" content="鳴子温泉クイズ｜あなたは何級？">
+<meta property="og:description" content="なんだこれ……と思ったら、鳴子温泉クイズ。全10問。">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+:root{
+  --ink:#24211f; --paper:#f7f3ea; --accent:#b44b35; --accent2:#d89b45;
+  --green:#526b57; --line:#ded6c8; --white:#fffdf8;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;color:var(--ink);background:var(--paper);
+  font-family:-apple-system,BlinkMacSystemFont,"Noto Sans JP","Yu Gothic",sans-serif;
+  line-height:1.7;
+}
+header{
+  min-height:92vh;display:flex;align-items:center;justify-content:center;
+  padding:60px 20px;position:relative;overflow:hidden;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(216,155,69,.18), transparent 28%),
+    radial-gradient(circle at 85% 75%, rgba(82,107,87,.15), transparent 30%),
+    var(--paper);
+}
+.hero{max-width:920px;width:100%;position:relative;z-index:1}
+.thumb{width:min(100%,560px);margin:0 auto 34px;position:relative}
+.thumb img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;border:1px solid #ded6c8;box-shadow:8px 8px 0 rgba(36,33,31,.08);filter:saturate(.75)}
+.kicker{font-weight:700;letter-spacing:.16em;color:var(--accent);font-size:.9rem}
+h1{font-size:clamp(3.2rem,10vw,7.5rem);line-height:.95;margin:18px 0 24px;letter-spacing:-.06em}
+h1 span{display:block;font-size:.35em;letter-spacing:.08em;margin-top:20px;color:var(--green)}
+.lead{font-size:clamp(1rem,2vw,1.25rem);max-width:680px}
+.badges{display:flex;flex-wrap:wrap;gap:10px;margin:28px 0}
+.badge{border:1px solid var(--line);background:rgba(255,253,248,.7);padding:7px 13px;border-radius:999px;font-size:.88rem}
+.btn{
+  border:0;background:var(--accent);color:white;padding:15px 26px;border-radius:999px;
+  font-size:1rem;font-weight:700;cursor:pointer;transition:.2s;box-shadow:0 8px 20px rgba(180,75,53,.18)
+}
+.btn:hover{transform:translateY(-2px)}
+.section{max-width:860px;margin:0 auto;padding:80px 20px}
+.progress-wrap{position:sticky;top:0;z-index:5;background:rgba(247,243,234,.94);backdrop-filter:blur(8px);padding:12px 20px;border-bottom:1px solid var(--line)}
+.progress-inner{max-width:860px;margin:auto}
+.progress-text{display:flex;justify-content:space-between;font-size:.85rem;font-weight:700;margin-bottom:7px}
+.progress{height:8px;background:#e7dfd2;border-radius:99px;overflow:hidden}
+.progress-bar{height:100%;width:0;background:var(--accent);transition:.35s}
+.quiz-card{
+  background:var(--white);border:1px solid var(--line);border-radius:28px;padding:clamp(24px,5vw,48px);
+  box-shadow:0 16px 45px rgba(65,50,35,.07)
+}
+.q-number{color:var(--accent);font-weight:800;font-size:.9rem;letter-spacing:.08em}
+.question{font-size:clamp(1.35rem,3vw,2rem);line-height:1.45;margin:10px 0 30px;font-weight:800}
+.options{display:grid;gap:12px}
+.option{
+  width:100%;text-align:left;padding:16px 18px;border:2px solid var(--line);background:var(--white);
+  border-radius:16px;cursor:pointer;font-size:1rem;transition:.18s;display:flex;gap:12px;align-items:flex-start
+}
+.option:hover{border-color:var(--accent2);background:#fffaf0}
+.option.selected{border-color:var(--accent);background:#fff4ed}
+.option .letter{
+  flex:0 0 30px;height:30px;border-radius:50%;background:#eee7da;display:grid;place-items:center;font-weight:800
+}
+.option.selected .letter{background:var(--accent);color:#fff}
+.quiz-actions{display:flex;justify-content:flex-end;margin-top:28px}
+#result{display:none}
+.result-card{text-align:center}
+.result-kicker{color:var(--accent);font-weight:800;letter-spacing:.12em}
+.score{font-size:clamp(3.5rem,12vw,7rem);font-weight:900;line-height:1;margin:16px 0}
+.rank{
+  display:inline-block;font-size:clamp(2rem,7vw,4.5rem);font-weight:900;color:var(--green);
+  margin:8px 0 20px
+}
+.result-desc{max-width:620px;margin:0 auto 30px;font-size:1.05rem}
+.breakdown{margin-top:35px;text-align:left;border-top:1px solid var(--line)}
+.breakdown-row{padding:16px 0;border-bottom:1px solid var(--line);display:flex;gap:12px}
+.correct{color:var(--green);font-weight:800}.wrong{color:var(--accent);font-weight:800}
+.source-note{font-size:.82rem;color:#6d665e;margin-top:28px}
+footer{padding:40px 20px 60px;text-align:center;color:#716a61;font-size:.82rem}
+.hidden{display:none}
+.bonus-intro{text-align:center;padding:20px 10px}.bonus-title{font-size:clamp(2rem,7vw,4rem);font-weight:900;color:var(--accent);margin-bottom:12px}
+.small{font-size:.9rem;color:#716a61}
+@media(max-width:600px){
+  .section{padding:55px 14px}
+  .quiz-card{border-radius:20px;padding:24px 18px}
+}
+</style>
+</head>
+<body>
+
+<header id="top">
+  <div class="hero">
+    <div class="kicker">NARUKO ONSEN QUIZ</div>
+    <h1>鳴子温泉<span>知れば知るほど、ちょっと好きになる。</span></h1>
+    <p class="lead">
+      温泉、こけし、湯治、地形、共同浴場……。<br>
+      「鳴子って温泉でしょ？」だけじゃ、まだ入口。
+      10問のクイズで、あなたの<strong>鳴子温泉レベル</strong>を試してみよう。
+    </p>
+    <div class="badges">
+      <div class="badge">全10問</div>
+      <div class="badge">所要時間 約3分</div>
+      <div class="badge">鳴子のディープ知識</div>
+    </div>
+    <button class="btn" onclick="startQuiz()">クイズをはじめる →</button>
+  </div>
+</header>
+
+<main id="quiz" class="hidden">
+  <div class="progress-wrap">
+    <div class="progress-inner">
+      <div class="progress-text"><span id="progressLabel">第1問 / 10</span><span id="progressPercent">10%</span></div>
+      <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="quiz-card">
+      <div class="q-number" id="qNumber"></div>
+      <div class="question" id="question"></div>
+      <div class="options" id="options"></div>
+      <div class="quiz-actions">
+        <button class="btn" id="nextBtn" onclick="nextQuestion()" disabled>次の問題 →</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<section id="result" class="section">
+  <div class="quiz-card result-card">
+    <div class="result-kicker">YOUR NARUKO LEVEL</div>
+    <div class="score"><span id="score">0</span><small id="scoreSuffix" style="font-size:.28em"> / 10</small></div>
+    <div id="rank" class="rank"></div>
+    <p id="resultDesc" class="result-desc"></p>
+    <button class="btn" id="restartBtn" onclick="restart()">もう一度挑戦する ↻</button>
+    <button class="btn" id="bonusEntryBtn" onclick="startBonusFromResult()" style="display:none;margin-top:12px;background:transparent;color:var(--accent);border:2px solid var(--accent);">マニア編へ踏み入れる →</button>
+
+    <div class="breakdown" id="breakdown"></div>
+    <p class="source-note">
+      ※問題は大崎市・鳴子温泉郷観光協会などの公開情報をもとに構成しています。<br>
+      施設の営業時間・料金等は変更される場合があります。
+    </p>
+  </div>
+</section>
+
+<footer>
+  NARUKO ONSEN QUIZ<br>
+  <span>「気軽に来て、ちょっと深く知る。」</span>
+</footer>
+
+<script>
+const questions = [
+  {
+    q:"鳴子温泉郷には、日本の掲示用泉質10種類のうち、何種類が集まっている？",
+    options:["5種類","6種類","7種類","8種類"],
+    answer:2,
+    explain:"鳴子温泉郷には、日本にある10種類の掲示用泉質のうち7種類が集まっています。"
+  },
+  {
+    q:"鳴子温泉郷の源泉数は、およそ何本？",
+    options:["約70本","約170本","約270本","約370本"],
+    answer:3,
+    explain:"大崎市の案内では、源泉数は約370本とされています。"
+  },
+  {
+    q:"鳴子こけしの特徴として知られているのはどれ？",
+    options:["頭が胴に固定されている","首を回すと音が出る","必ず青色で描かれる","金属で作られている"],
+    answer:1,
+    explain:"鳴子こけしは、首を胴に差し込む独特の技法があり、回すと「キュッキュッ」と音が出るのが特徴です。"
+  },
+  {
+    q:"鳴子こけしの胴に描かれる代表的な模様は？",
+    options:["菊","桜","松","波"],
+    answer:0,
+    explain:"鳴子系こけしは、大きな頭と安定感のある胴、菊を中心とする華やかな胴模様が特徴です。"
+  },
+  {
+    q:"鳴子温泉郷の5つの温泉地に含まれないものはどれ？",
+    options:["鳴子温泉","東鳴子温泉","中山平温泉","作並温泉"],
+    answer:3,
+    explain:"鳴子温泉郷は、鳴子・東鳴子・川渡・中山平・鬼首の5つの温泉地からなります。"
+  },
+  {
+    q:"「滝の湯」は、鳴子温泉神社とどんな関係がある？",
+    options:["神社の御神湯とされる","神社の宿坊である","神社の資料館である","神社の祭具を作っている"],
+    answer:0,
+    explain:"鳴子温泉郷観光協会は、滝の湯を「鳴子温泉神社の御神湯」と紹介しています。"
+  },
+  {
+    q:"「鳴子・早稲田桟敷湯」の名前の由来に関係するのは？",
+    options:["早稲田大学の学生による掘削","早稲田大学の卒業旅行","早稲田大学の建築学部による命名","早稲田大学の寄贈"],
+    answer:0,
+    explain:"昭和23年、早稲田大学の学生が掘った温泉が名前の由来です。"
+  },
+  {
+    q:"昔から鳴子温泉郷に受け継がれてきた文化として、大崎市が紹介しているものは？",
+    options:["湯治文化","海女文化","茶道文化","鉱山文化"],
+    answer:0,
+    explain:"鳴子温泉郷では、温泉で心身を休める「湯治」の文化が長く受け継がれています。"
+  },
+  {
+    q:"鳴子こけしが作られるようになった時期は、どの時代とされている？",
+    options:["平安時代末期","江戸時代（文化・文政のころ）","明治時代中期","昭和初期"],
+    answer:1,
+    explain:"大崎市は、江戸時代の文化・文政（1804～1830年）のころ、木地師が子どもの玩具として作ったのが始まりと紹介しています。"
+  },
+  {
+    q:"現在の鳴子温泉郷は、昔ながらの湯治をどのように捉えている？",
+    options:["長期滞在だけに限定している","現代のライフスタイルに合わせた『新しい湯治』として提案している","観光客には勧めていない","温泉に入らず自然だけを楽しむものとしている"],
+    answer:1,
+    explain:"昔ながらの湯治文化を、現代のライフスタイルに合わせて楽しむ「新しい湯治」として紹介しています。"
+  }
+];
+
+const bonusQuestions = [
+  {
+    q:"鳴子温泉郷には、日本にある11の「旧泉質」のうち何種類が集まっている？",
+    options:["5種類","6種類","8種類","10種類"],
+    answer:2,
+    explain:"鳴子温泉郷観光協会によると、日本にある11の旧泉質のうち8種類が鳴子温泉郷に集まっています。"
+  },
+  {
+    q:"東北各地で「こげす」「こうげし」「きぼこ」など様々だった呼び名が、「こけし」に統一されたのはいつ？",
+    options:["明治15年（1882年）","大正5年（1916年）","昭和15年（1940年）","昭和35年（1960年）"],
+    answer:2,
+    explain:"大崎市によると、昭和15年（1940年）の東京こけし会総会で、呼び名が「こけし」に統一されました。"
+  },
+  {
+    q:"鳴子温泉の共同浴場「滝の湯」のpHは、現在の案内ではいくつ？",
+    options:["2.9","4.9","6.9","8.9"],
+    answer:0,
+    explain:"鳴子温泉郷観光協会の現在の案内では、滝の湯は酸性でpH 2.9です。"
+  },
+  {
+    q:"「宮城伝統こけし」の5系統に含まれないのはどれ？",
+    options:["鳴子系","作並系","弥治郎系","津軽系"],
+    answer:3,
+    explain:"宮城県内の5系統は、鳴子・作並・遠刈田・弥治郎・肘折。津軽系は青森県黒石市を主産地とする系統です。"
+  },
+  {
+    q:"江戸時代に仙台藩主・伊達家専用の「御殿湯」があったのは、どの温泉地？",
+    options:["鳴子温泉","東鳴子温泉","中山平温泉","鬼首温泉"],
+    answer:1,
+    explain:"鳴子温泉郷観光協会によると、東鳴子温泉には江戸時代、仙台藩主伊達家専用の「御殿湯」がありました。"
+  }
+];
+
+let current=0, score=0, selected=null, answers=[];
+let phase="main";
+let mainScore=0, mainAnswers=[];
+
+// DEBUG CHEAT CODE: ↑ ↑ ↓ ↓ ← → ← →
+let debugKeys=[];
+const debugCode=["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight"];
+document.addEventListener("keydown", (e)=>{
+  if(!document.getElementById("top") || document.getElementById("top").style.display==="none") return;
+  debugKeys.push(e.key);
+  if(debugKeys.length>debugCode.length) debugKeys.shift();
+  if(debugKeys.length===debugCode.length && debugKeys.every((key,i)=>key===debugCode[i])){
+    debugKeys=[];
+    debugCompleteMain();
+  }
+});
+
+function debugCompleteMain(){
+  phase="main";
+  current=0;
+  score=questions.length;
+  mainScore=questions.length;
+  mainAnswers=questions.map(()=>({selected:null,correct:true}));
+  answers=mainAnswers.slice();
+  document.getElementById("top").style.display="none";
+  document.getElementById("quiz").classList.add("hidden");
+  showResult();
+}
+
+function startQuiz(){
+  document.getElementById("top").style.display="none";
+  document.getElementById("quiz").classList.remove("hidden");
+  document.getElementById("result").style.display="none";
+  phase="main"; current=0; score=0; selected=null; answers=[];
+  renderQuestion();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function getActiveQuestions(){
+  return phase==="bonus" ? bonusQuestions : questions;
+}
+
+function renderQuestion(){
+  const active=getActiveQuestions();
+  const q=active[current];
+  selected=null;
+
+  if(phase==="bonus"){
+    document.getElementById("qNumber").textContent=`裏STAGE ${String(current+1).padStart(2,"0")}`;
+    document.getElementById("progressLabel").textContent=`マニア編・第${current+1}問 / ${active.length}`;
+  }else{
+    document.getElementById("qNumber").textContent=`QUESTION ${String(current+1).padStart(2,"0")}`;
+    document.getElementById("progressLabel").textContent=`第${current+1}問 / ${active.length}`;
+  }
+
+  document.getElementById("question").textContent=q.q;
+  const percent=Math.round(((current+1)/active.length)*100);
+  document.getElementById("progressPercent").textContent=`${percent}%`;
+  document.getElementById("progressBar").style.width=`${percent}%`;
+
+  const box=document.getElementById("options");
+  box.innerHTML="";
+  q.options.forEach((opt,i)=>{
+    const b=document.createElement("button");
+    b.className="option";
+    b.innerHTML=`<span class="letter">${String.fromCharCode(65+i)}</span><span>${opt}</span>`;
+    b.onclick=()=>selectOption(i,b);
+    box.appendChild(b);
+  });
+
+  const next=document.getElementById("nextBtn");
+  next.disabled=true;
+  next.textContent=current===active.length-1?"結果を見る →":"次の問題 →";
+}
+
+function selectOption(i,btn){
+  selected=i;
+  document.querySelectorAll(".option").forEach(x=>x.classList.remove("selected"));
+  btn.classList.add("selected");
+  document.getElementById("nextBtn").disabled=false;
+}
+
+function nextQuestion(){
+  if(selected===null)return;
+  const active=getActiveQuestions();
+  const q=active[current];
+  const correct=selected===q.answer;
+  if(correct)score++;
+  answers.push({selected,correct});
+
+  if(current<active.length-1){
+    current++;
+    renderQuestion();
+    window.scrollTo({top:0,behavior:"smooth"});
+    return;
+  }
+
+  if(phase==="main"){
+    mainScore=score;
+    mainAnswers=answers.slice();
+
+    showResult();
+  }else{
+    showResult();
+  }
+}
+
+function startBonus(){
+  phase="bonus";
+  current=0; score=0; selected=null; answers=[];
+  document.getElementById("quiz").classList.remove("hidden");
+
+  // 10問全問正解者だけが見る、ほんの少し意味不明な入口。
+  document.getElementById("qNumber").textContent="UNLOCKED";
+  document.getElementById("question").innerHTML=
+    "10問、全部正解。<br><span style='color:var(--accent)'>……本当に鳴子を知っていますか？</span>";
+  document.getElementById("progressLabel").textContent="鳴子マニア編・解禁";
+  document.getElementById("progressPercent").textContent="BONUS";
+  document.getElementById("progressBar").style.width="100%";
+
+  const box=document.getElementById("options");
+  box.innerHTML=`<div class="bonus-intro">
+    <div class="bonus-title">鳴子マニア編</div>
+    <p>ここから先は、普通に鳴子温泉へ行っただけでは分からない問題です。</p>
+    <p class="small">全5問。最後までたどり着いてください。</p>
+  </div>`;
+
+  const next=document.getElementById("nextBtn");
+  next.disabled=false;
+  next.textContent="マニア編を始める →";
+  next.onclick=beginBonusQuestions;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function beginBonusQuestions(){
+  document.getElementById("nextBtn").onclick=nextQuestion;
+  renderQuestion();
+}
+
+function showResult(){
+  document.getElementById("quiz").classList.add("hidden");
+  document.getElementById("result").style.display="block";
+
+  const isBonus=phase==="bonus";
+  const total=isBonus ? mainScore+score : mainScore;
+  document.getElementById("score").textContent=isBonus ? total : mainScore;
+  document.getElementById("scoreSuffix").textContent=isBonus ? " / 15" : " / 10";
+
+  let rank,desc;
+  if(!isBonus){
+    if(mainScore>=9){rank="こけし級";desc="鳴子のコアまでかなり知っています。あなたはもう、こけし級！";}
+    else if(mainScore>=7){rank="鳴子級";desc="温泉だけでなく、文化や歴史にもかなり詳しい！かなりの鳴子通です。";}
+    else if(mainScore>=5){rank="温泉級";desc="鳴子の温泉を中心に、基本もしっかり押さえています。";}
+    else if(mainScore>=3){rank="シソ巻き級";desc="鳴子のことを少しずつ知り始めています。ここからさらに深掘り！";}
+    else {rank="ひよこ級";desc="ここからがスタート！知らないからこそ、現地で見つける楽しさがあります。";}
+  }else if(score===bonusQuestions.length){
+    rank="あなたは鳴子になった";
+    desc="15問、すべて正解。もう説明することはありません。";
+  }else{
+    rank="あなたはマニアに成りきれなかった";
+    desc="あと一歩でした。鳴子は、そう簡単には極められません。";
+  }
+
+  document.getElementById("rank").textContent=rank;
+  document.getElementById("resultDesc").textContent=desc;
+
+  const bd=document.getElementById("breakdown");
+  bd.innerHTML="";
+
+  const addBreakdown=(list, labelPrefix, answerList)=>{
+    list.forEach((q,i)=>{
+      const row=document.createElement("div");
+      row.className="breakdown-row";
+      const label=answerList[i].correct?"正解":"不正解";
+      row.innerHTML=`<div style="min-width:76px" class="${answerList[i].correct?"correct":"wrong"}">${label}</div><div><strong>${labelPrefix}${i+1}</strong> ${q.explain}</div>`;
+      bd.appendChild(row);
+    });
+  };
+
+  addBreakdown(questions,"Q",mainAnswers);
+  if(isBonus){
+    const heading=document.createElement("div");
+    heading.style.cssText="padding:22px 0 8px;font-weight:900;color:var(--accent)";
+    heading.textContent=`鳴子マニア編：${score} / ${bonusQuestions.length}`;
+    bd.appendChild(heading);
+    addBreakdown(bonusQuestions,"裏Q",answers);
+  }
+
+  const btn=document.getElementById("restartBtn");
+  btn.textContent="もう一度挑戦する ↻";
+  btn.onclick=restart;
+
+  const bonusEntry=document.getElementById("bonusEntryBtn");
+  if(!isBonus && mainScore===questions.length){
+    bonusEntry.style.display="inline-flex";
+  }else{
+    bonusEntry.style.display="none";
+  }
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function startBonusFromResult(){
+  document.getElementById("result").style.display="none";
+  startBonus();
+}
+
+function restart(){
+  document.getElementById("result").style.display="none";
+  document.getElementById("top").style.display="flex";
+  phase="main";
+  document.getElementById("nextBtn").onclick=nextQuestion;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+</script>
+</body>
+</html>
